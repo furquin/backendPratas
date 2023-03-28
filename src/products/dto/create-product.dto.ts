@@ -20,9 +20,12 @@ export class CreateProductDto {
     category?: string;
 
     @IsString()
-    image: string;
+    image?: string;
 
     @IsString()
     @IsNotEmpty()
     bar_code: string;
+
+    @IsString()
+    size?: string;
 }

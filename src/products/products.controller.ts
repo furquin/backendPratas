@@ -16,13 +16,13 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  @Get('/filter')
+  findOne(@Body() data: object) {
+    return this.productsService.findOne(data);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  @Delete(':bar_code')
+  remove(@Param('bar_code') bar_code: string) {
+    return this.productsService.remove(bar_code);
   }
 }

@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,6 +9,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 model User {
   id        String   @id @default(uuid())
@@ -24,9 +28,10 @@ model Product {
   description String?
   price       Int
   quantity    Int
-  bar_code    String
+  bar_code    String  @unique
   image       String?
   category    String?
+  size        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
