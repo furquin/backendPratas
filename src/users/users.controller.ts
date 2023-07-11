@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { GuardRoute } from 'src/common/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -12,17 +13,18 @@ export class UsersController {
   }
 
   @Get()
+  @GuardRoute()
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get('/email')
-  findOne(@Body('email') email: string) {
-    return this.usersService.findOne(email);
+  @Get('/:id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 
-  @Delete()
-  remove(@Body('email') email: string) {
-    return this.usersService.remove(email);
+  @Delete('/:id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }
