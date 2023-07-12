@@ -12,7 +12,7 @@ datasource db {
 
 
 model User {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
@@ -28,7 +28,7 @@ model Product {
   description String?
   price       Int
   quantity    Int
-  bar_code    String  @unique
+  barCode     String  @unique
   image       String?
   category    String?
   size        String?

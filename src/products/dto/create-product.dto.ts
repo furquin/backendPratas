@@ -24,7 +24,7 @@ export class CreateProductDto {
 
     @IsString()
     @IsNotEmpty()
-    bar_code: string;
+    barCode: string;
 
     @IsString()
     size?: string;

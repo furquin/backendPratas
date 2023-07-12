@@ -18,11 +18,11 @@ export class ProductsController {
 
   @Get('/filter')
   findOne(@Body() data: object) {
-    return this.productsService.findOne(data);
+    return this.productsService.findFilters(data);
   }
 
-  @Delete(':bar_code')
-  remove(@Param('bar_code') bar_code: string) {
-    return this.productsService.remove(bar_code);
+  @Delete('/:barCode')
+  remove(@Param('barCode') barCode: string) {
+    return this.productsService.remove(barCode);
   }
 }

@@ -10,7 +10,7 @@ export class ProductsService {
   async create(data: CreateProductDto): Promise<CreateProductDto> {
     const product = await this.prisma.product.findFirst({
       where: {
-        bar_code: data.bar_code,
+        barCode: data.barCode,
       }
     })
 
@@ -27,7 +27,7 @@ export class ProductsService {
     return await this.prisma.product.findMany();
   }
 
-  async findOne(data: object) {
+  async findFilters(data: object) {
     const product = await this.prisma.product.findMany({
       where: {
         ...data,
@@ -40,10 +40,10 @@ export class ProductsService {
     
   }
 
-  async remove(bar_code: string) {
+  async remove(barCode: string) {
     const product = await this.prisma.product.findFirst({
       where: {
-        bar_code: bar_code,
+        barCode: barCode,
       }
     })
 
@@ -51,9 +51,9 @@ export class ProductsService {
 
     await this.prisma.product.delete({
       where: {
-        bar_code: bar_code,
+        barCode: barCode,
       }
     })
-    return `Product ${bar_code} deleted`;
+    return `Product ${product.name} deleted`;
   }
 }
