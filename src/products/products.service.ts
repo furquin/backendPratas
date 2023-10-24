@@ -1,18 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '../database/prismaService'
-import { CreateProductDto } from './dto/create-product.dto'
+import * as DTO from './dto'
 
 @Injectable()
 export class ProductsService {
 	constructor(private prisma: PrismaService) {}
 
-	async create(data: CreateProductDto): Promise<CreateProductDto> {
+	async create(data: DTO.CreateProductDto): Promise<any> {
 		const product = await this.prisma.product.findFirst({
 			where: {
 				barCode: data.barCode,
 			},
 		})
-
 		if (!product) {
 			return await this.prisma.product.create({
 				data,
@@ -22,26 +21,33 @@ export class ProductsService {
 		throw new HttpException('Product already exists', HttpStatus.BAD_REQUEST)
 	}
 
-	async findAll(): Promise<CreateProductDto[]> {
-		return await this.prisma.product.findMany()
-	}
-
-	async findFilters(data: object) {
+	async findAll(data: string): Promise<any> {
 		const product = await this.prisma.product.findMany({
 			where: {
-				...data,
+				OR: [{ name: { contains: data } }, { barCode: { contains: data } }, { description: { contains: data } }],
 			},
 		})
-
-		if (!product) throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
 
 		return product
 	}
 
-	async remove(barCode: string) {
+	async findOneById(id: string): Promise<any> {
 		const product = await this.prisma.product.findFirst({
 			where: {
-				barCode: barCode,
+				id,
+			},
+		})
+
+		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
+
+		return product
+	}
+
+	async remove(id: string) {
+		const product = await this.prisma.product.findFirst({
+			where: {
+				id,
 			},
 		})
 
@@ -49,9 +55,48 @@ export class ProductsService {
 
 		await this.prisma.product.delete({
 			where: {
-				barCode: barCode,
+				id,
 			},
 		})
 		return `Product ${product.name} deleted`
+	}
+
+	async update(id: string, data: any) {
+		const product = await this.prisma.product.findFirst({
+			where: {
+				id,
+			},
+		})
+
+		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
+
+		return await this.prisma.product.update({
+			where: {
+				id,
+			},
+			data,
+		})
+	}
+
+	async checkout(id: string, data: DTO.CheckoutDto) {
+		const product = await this.prisma.product.findFirst({
+			where: {
+				id,
+			},
+		})
+
+		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
+
+		if (product.quantity < data.quantity)
+			throw new HttpException('Product quantity is less than the requested', HttpStatus.BAD_REQUEST)
+
+		return await this.prisma.product.update({
+			where: {
+				id,
+			},
+			data: {
+				quantity: product.quantity - data.quantity,
+			},
+		})
 	}
 }

@@ -1,31 +1,35 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class CreateProductDto {
-	@IsString()
-	@IsNotEmpty()
+	@IsString({ message: 'Name must be a string' })
+	@IsNotEmpty({ message: 'Name is required' })
 	name: string
 
-	@IsString()
+	@IsString({ message: 'Description must be a string' })
+	@IsOptional()
 	description?: string
 
-	@IsNumber()
-	@IsNotEmpty()
+	@IsDecimal({}, { message: 'Price must be a decimal' })
+	@IsNotEmpty({ message: 'Price is required' })
 	price: number
 
-	@IsNumber()
-	@IsNotEmpty()
+	@IsNumber({}, { message: 'Quantity must be a number' })
+	@IsNotEmpty({ message: 'Quantity is required' })
 	quantity: number
 
-	@IsString()
-	category?: string
+	@IsNumber({}, { message: 'Category id must be a number' })
+	@IsOptional()
+	categoryId?: number
 
-	@IsString()
+	@IsOptional()
+	@IsString({ message: 'Image must be a string' })
 	image?: string
 
-	@IsString()
-	@IsNotEmpty()
+	@IsString({ message: 'Bar code must be a string' })
+	@IsNotEmpty({ message: 'Bar code is required' })
 	barCode: string
 
-	@IsString()
+	@IsString({ message: 'Size must be a string' })
+	@IsOptional()
 	size?: string
 }
