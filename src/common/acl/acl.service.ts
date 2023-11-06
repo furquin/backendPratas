@@ -22,6 +22,11 @@ export class ACLService {
 		'products.update': ['admin_sistema', 'admin_conta'],
 		'products.delete': ['admin_sistema', 'admin_conta'],
 		'products.checkout': ['admin_sistema', 'admin_conta'],
+
+		'categories.read': ['admin_sistema', 'admin_conta'],
+		'categories.create': ['admin_sistema', 'admin_conta'],
+		'categories.update': ['admin_sistema', 'admin_conta'],
+		'categories.delete': ['admin_sistema', 'admin_conta'],
 	}
 
 	verifyPermission(action: action, auth: AuthPresenter, errorMessage?: string): boolean {
