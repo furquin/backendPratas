@@ -4,10 +4,12 @@ import { JwtModule } from '@nestjs/jwt'
 import { LoginModule } from './modules/auth/login.module'
 import { ProductsModule } from './modules/products/products.module'
 import { UsersModule } from './modules/users/users.module'
+import { ACLModule } from './common/acl/acl.module'
 
 @Module({
 	imports: [
 		UsersModule,
+		ACLModule,
 		ProductsModule,
 		LoginModule,
 		JwtModule.register({ global: true }),

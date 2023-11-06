@@ -11,7 +11,6 @@ export class LoginController {
 	@Public()
 	async login(@Body(new ValidationPipe()) authDto: LoginDto) {
 		const payload = await this.loginService.signIn(authDto.email, authDto.password)
-
 		return payload
 	}
 }

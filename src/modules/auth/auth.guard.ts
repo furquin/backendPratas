@@ -4,16 +4,22 @@ import {
 	ForbiddenException,
 	Injectable,
 	UseGuards,
+	SetMetadata,
+	UnauthorizedException,
 	applyDecorators,
 	createParamDecorator,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
+import { ACLService, actionName } from 'src/common/acl/acl.service'
 import { UsersService } from 'src/modules/users/users.service'
 
-export function GuardRoute() {
-	return applyDecorators(UseGuards(AuthGuard))
+export function GuardRoute(...actions: actionName[]) {
+	return applyDecorators(
+		SetMetadata('actions', actions),
+		UseGuards(AuthGuard, ActionGuard) //
+	)
 }
 
 export const Auth = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
@@ -44,7 +50,6 @@ export class AuthGuard implements CanActivate {
 			})
 
 			const auth = await this.getAuth(payload.uid)
-
 			request['auth'] = auth
 		} catch (e) {
 			throw new ForbiddenException(e instanceof ForbiddenException ? e.message : 'Token inválido.')
@@ -55,7 +60,6 @@ export class AuthGuard implements CanActivate {
 
 	private async getAuth(userId: number) {
 		const user = await this.user.findOne(userId)
-
 		if (!user) {
 			throw new ForbiddenException('Usuário não encontrado.')
 		}
@@ -66,5 +70,21 @@ export class AuthGuard implements CanActivate {
 	private extractTokenFromHeader(request: Request): string | undefined {
 		const [type, token] = request.headers.authorization?.split(' ') ?? []
 		return type === 'Bearer' ? token : undefined
+	}
+}
+
+@Injectable()
+class ActionGuard implements CanActivate {
+	constructor(
+		private readonly aclService: ACLService //
+	) {}
+
+	canActivate(context: ExecutionContext): boolean {
+		const actions = Reflect.getMetadata('actions', context.getHandler())
+		const request = context.switchToHttp().getRequest()
+		const { auth } = request
+		if (!auth) throw new UnauthorizedException('Sem request auth.')
+
+		return this.aclService.verifyPermission(actions, auth)
 	}
 }

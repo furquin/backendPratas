@@ -7,7 +7,6 @@ import { BcryptService } from 'src/services/bcrypt/bcrypt.service'
 import { JwtTokenService } from 'src/services/jwt/jwt.service'
 import { LoginController } from './login.controller'
 import { LoginService } from './login.service'
-
 @Module({
 	imports: [],
 	controllers: [LoginController],
