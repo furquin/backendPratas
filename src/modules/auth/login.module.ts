@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
-import { LoginService } from './login.service'
-import { LoginController } from './login.controller'
-import { UsersService } from 'src/users/users.service'
-import { JwtTokenService } from 'src/services/jwt/jwt.service'
 import { ConfigService } from '@nestjs/config'
-import { BcryptService } from 'src/services/bcrypt/bcrypt.service'
-import { PrismaService } from 'src/database/prismaService'
 import { JwtService } from '@nestjs/jwt'
+import { PrismaService } from 'src/database/prismaService'
+import { UsersService } from 'src/modules/users/users.service'
+import { BcryptService } from 'src/services/bcrypt/bcrypt.service'
+import { JwtTokenService } from 'src/services/jwt/jwt.service'
+import { LoginController } from './login.controller'
+import { LoginService } from './login.service'
 
 @Module({
 	imports: [],

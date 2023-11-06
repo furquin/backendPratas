@@ -10,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
-import { UsersService } from 'src/users/users.service'
+import { UsersService } from 'src/modules/users/users.service'
 
 export function GuardRoute() {
 	return applyDecorators(UseGuards(AuthGuard))

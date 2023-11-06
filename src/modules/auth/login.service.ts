@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { IUser } from 'src/modules/users/interfaces/user.interface'
+import { UsersService } from 'src/modules/users/users.service'
 import { BcryptService } from 'src/services/bcrypt/bcrypt.service'
 import { JwtTokenService } from 'src/services/jwt/jwt.service'
-import { ConfigService } from '@nestjs/config'
-import { UsersService } from 'src/users/users.service'
-import { IUser } from 'src/interfaces/user.interface'
 
 @Injectable()
 export class LoginService {
@@ -23,7 +23,6 @@ export class LoginService {
 				const secret = this.configService.get<string>('JWT_SECRET')
 				const expireIn = this.configService.get<string>('JWT_EXPIRATION_TIME')
 				const token = this.jwtService.createToken(payload, secret, expireIn)
-				delete user.password
 				return { user, login: { token } }
 			}
 		}
