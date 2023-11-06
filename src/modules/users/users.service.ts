@@ -13,11 +13,18 @@ export class UsersService {
 		data.password = await this.bcrypt.hash(data.password)
 		const user = await this.prisma.user.create({
 			data,
+			include: {
+				role: true,
+			},
 		})
 		return new UserPresenter(user)
 	}
 	async findAll(): Promise<UserPresenter[]> {
-		const users = await this.prisma.user.findMany()
+		const users = await this.prisma.user.findMany({
+			include: {
+				role: true,
+			},
+		})
 		return users.map((user) => new UserPresenter(user))
 	}
 	async findOne(id: number): Promise<UserPresenter> {
@@ -25,8 +32,10 @@ export class UsersService {
 			where: {
 				id,
 			},
+			include: {
+				role: true,
+			},
 		})
-
 		if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND)
 		return new UserPresenter(user)
 	}
@@ -34,6 +43,9 @@ export class UsersService {
 		const user = await this.prisma.user.findFirst({
 			where: {
 				email,
+			},
+			include: {
+				role: true,
 			},
 		})
 		return user

@@ -6,6 +6,7 @@ export class UserPresenter {
 	email: string
 	createdAt: Date
 	updatedAt: Date
+	role: string
 
 	constructor(user: IUser) {
 		this.id = user.id
@@ -13,5 +14,6 @@ export class UserPresenter {
 		this.email = user.email
 		this.createdAt = user.createdAt
 		this.updatedAt = user.updatedAt
+		this.role = user.role.name
 	}
 }
