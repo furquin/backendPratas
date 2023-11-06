@@ -18,21 +18,21 @@ export class ProductsController {
 
 	@Get('/:id')
 	findOneById(@Param('id') id: string) {
-		return this.productsService.findOneById(id)
+		return this.productsService.findOneById(+id)
 	}
 
 	@Patch('/:id')
 	update(@Param('id') id: string, @Body() updateProductsDto: DTO.UpdateProductDto) {
-		return this.productsService.update(id, updateProductsDto)
+		return this.productsService.update(+id, updateProductsDto)
 	}
 
 	@Delete('/:id')
 	remove(@Param('id') id: string) {
-		return this.productsService.remove(id)
+		return this.productsService.remove(+id)
 	}
 
 	@Post('/:id/checkout')
 	checkout(@Param('id') id: string, @Body() data: DTO.CheckoutDto) {
-		return this.productsService.checkout(id, data)
+		return this.productsService.checkout(+id, data)
 	}
 }
