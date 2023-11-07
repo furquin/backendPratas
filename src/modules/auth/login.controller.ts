@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe } from '@nestjs/common'
+import { Controller, Post, Body, ValidationPipe, HttpCode } from '@nestjs/common'
 import { LoginService } from './login.service'
 import { LoginDto } from './dto/login.dto'
 import { Public } from 'src/common/decorators/public.decorator'
@@ -9,6 +9,7 @@ export class LoginController {
 
 	@Post()
 	@Public()
+	@HttpCode(200)
 	async login(@Body(new ValidationPipe()) authDto: LoginDto) {
 		const payload = await this.loginService.signIn(authDto.email, authDto.password)
 		return payload
