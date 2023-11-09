@@ -8,7 +8,7 @@
 	],
 	"routes": [
 		{
-			"src": "(.*)",
+			"src": "/pratas/backendPratas/(.*)",
 			"dest": "src/main.ts"
 		}
 	]
