@@ -16,6 +16,24 @@ async function main() {
 			})
 	)
 
+	await prisma.store.upsert({
+		where: { name: 'conta mãe' },
+		update: {},
+		create: {
+			id: 1,
+			name: 'conta mãe',
+		},
+	})
+
+	await prisma.category.upsert({
+		where: { name: 'Sem categoria' },
+		update: {},
+		create: {
+			name: 'Sem categoria',
+			storeId: 1,
+		},
+	})
+
 	await prisma.user.upsert({
 		where: { email: 'admin@admin.com' },
 		update: {},
@@ -24,6 +42,7 @@ async function main() {
 			email: 'admin@admin.com',
 			password: 'Admin123',
 			roleId: 1,
+			storeId: 1,
 		},
 	})
 }

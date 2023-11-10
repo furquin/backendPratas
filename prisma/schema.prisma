@@ -17,6 +17,8 @@ model User {
   password  String
   roleId    Int      @default(3)
   role      Role     @relation(fields: [roleId], references: [id])
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -24,27 +26,31 @@ model User {
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
   price       Decimal
   quantity    Int
-  barCode     String    @unique
+  barCode     String   @unique
   image       String?
-  categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int      @default(1)
+  storeId     Int
+  store       Store    @relation(fields: [storeId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
   size        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("products")
 }
 
 model Category {
   id        Int       @id @default(autoincrement())
-  name      String
+  name      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  storeId   Int
+  store     Store     @relation(fields: [storeId], references: [id])
   products  Product[]
 
   @@map("categories")
@@ -59,4 +65,16 @@ model Role {
   User      User[]
 
   @@map("roles")
+}
+
+model Store {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  users     User[]
+  Product   Product[]
+  Category  Category[]
+
+  @@map("stores")
 }

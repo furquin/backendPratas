@@ -1,3 +1,4 @@
+import { IStore } from 'src/modules/stores/interfaces/store.interface'
 import { IUser } from '../interfaces/user.interface'
 
 export class UserPresenter {
@@ -7,6 +8,7 @@ export class UserPresenter {
 	createdAt: Date
 	updatedAt: Date
 	role: string
+	store: IStore
 
 	constructor(user: IUser) {
 		this.id = user.id
@@ -15,5 +17,6 @@ export class UserPresenter {
 		this.createdAt = user.createdAt
 		this.updatedAt = user.updatedAt
 		this.role = user.role.name
+		this.store = user.store
 	}
 }
