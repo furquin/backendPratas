@@ -17,9 +17,9 @@ export class CreateProductDto {
 	@IsNotEmpty({ message: 'Quantity is required' })
 	quantity: number
 
-	@IsNumber({}, { message: 'Category id must be a number' })
+	@IsString({ message: 'Category name must be a string' })
 	@IsOptional()
-	categoryId?: number
+	categoryName: number
 
 	@IsOptional()
 	@IsString({ message: 'Image must be a string' })

@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common'
 import { ProductsService } from './products.service'
 import * as DTO from './dto'
-import { GuardRoute } from '../auth/auth.guard'
+import { Auth, GuardRoute } from '../auth/auth.guard'
+import { AuthPresenter } from '../auth/presenters/auth.presenter'
 
 @Controller('products')
 export class ProductsController {
@@ -9,37 +10,37 @@ export class ProductsController {
 
 	@Post()
 	@GuardRoute('products.create')
-	create(@Body() createProductsDto: DTO.CreateProductDto) {
-		return this.productsService.create(createProductsDto)
+	create(@Auth() auth: AuthPresenter, @Body() createProductsDto: DTO.CreateProductDto) {
+		return this.productsService.create(auth, createProductsDto)
 	}
 
 	@Get()
 	@GuardRoute('products.read')
-	findAll(@Query('filter') data?: string) {
-		return this.productsService.findAll(data)
+	findAll(@Auth() auth: AuthPresenter, @Query('filter') data?: string) {
+		return this.productsService.findAll(auth, data)
 	}
 
 	@Get('/:id')
 	@GuardRoute('products.read')
-	findOneById(@Param('id') id: string) {
-		return this.productsService.findOneById(+id)
+	findOneById(@Auth() auth: AuthPresenter, @Param('id') id: string) {
+		return this.productsService.findOneById(auth, +id)
 	}
 
 	@Patch('/:id')
 	@GuardRoute('products.update')
-	update(@Param('id') id: string, @Body() updateProductsDto: DTO.UpdateProductDto) {
-		return this.productsService.update(+id, updateProductsDto)
+	update(@Auth() auth: AuthPresenter, @Param('id') id: string, @Body() updateProductsDto: DTO.UpdateProductDto) {
+		return this.productsService.update(auth, +id, updateProductsDto)
 	}
 
 	@Delete('/:id')
 	@GuardRoute('products.delete')
-	remove(@Param('id') id: string) {
-		return this.productsService.remove(+id)
+	remove(@Auth() auth: AuthPresenter, @Param('id') id: string) {
+		return this.productsService.remove(auth, +id)
 	}
 
 	@Post('/:id/checkout')
 	@GuardRoute('products.checkout')
-	checkout(@Param('id') id: string, @Body() data: DTO.CheckoutDto) {
+	checkout(@Auth() auth: AuthPresenter, @Param('id') id: string, @Body() data: DTO.CheckoutDto) {
 		return this.productsService.checkout(+id, data)
 	}
 }

@@ -3,12 +3,13 @@ import { PrismaService } from '../../database/prismaService'
 import * as DTO from './dto'
 import { ProductPresenter } from './presenters/product.presenter'
 import { Prisma } from '@prisma/client'
+import { AuthPresenter } from '../auth/presenters/auth.presenter'
 
 @Injectable()
 export class ProductsService {
 	constructor(private prisma: PrismaService) {}
 
-	async create(data: DTO.CreateProductDto): Promise<ProductPresenter> {
+	async create(auth: AuthPresenter, data: DTO.CreateProductDto): Promise<ProductPresenter> {
 		let product = await this.prisma.product.findFirst({
 			where: {
 				barCode: data.barCode,
@@ -16,18 +17,35 @@ export class ProductsService {
 		})
 		if (product) throw new HttpException('Product already exists', HttpStatus.BAD_REQUEST)
 
-		product = await this.prisma.product.create({
-			data,
+		const query: Prisma.ProductCreateArgs = {
+			data: {
+				...data,
+				store: {
+					connect: {
+						id: auth.store.id,
+					},
+				},
+			},
 			include: {
 				category: true,
 			},
-		})
+		}
+		if (data.categoryName) {
+			query.data.category = {
+				connect: {
+					id: data.categoryName,
+				},
+			}
+		}
+
+		product = await this.prisma.product.create(query)
 
 		return new ProductPresenter(product)
 	}
 
-	async findAll(data: string): Promise<ProductPresenter[]> {
+	async findAll(auth: AuthPresenter, data: string): Promise<ProductPresenter[]> {
 		const query: Prisma.ProductFindManyArgs = { include: { category: true } }
+		if (auth.role !== 'admin_sistema') query.where = { storeId: auth.store.id }
 
 		if (data) {
 			query.where = {
@@ -41,46 +59,38 @@ export class ProductsService {
 		return products.map((product) => new ProductPresenter(product))
 	}
 
-	async findOneById(id: number): Promise<ProductPresenter> {
-		const product = await this.prisma.product.findFirst({
-			where: {
-				id,
-			},
-			include: {
-				category: true,
-			},
-		})
+	async findOneById(auth: AuthPresenter, id: number): Promise<ProductPresenter> {
+		const query: Prisma.ProductFindManyArgs = { include: { category: true } }
+		if (auth.role !== 'admin_sistema') query.where = { storeId: auth.store.id }
+		query.where = { id }
+		const product = await this.prisma.product.findFirst(query)
 
 		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
 
 		return new ProductPresenter(product)
 	}
 
-	async remove(id: number): Promise<string> {
-		const product = await this.prisma.product.findFirst({
-			where: {
-				id,
-			},
-		})
+	async remove(auth: AuthPresenter, id: number): Promise<string> {
+		const query: Prisma.ProductFindManyArgs = { where: { id } }
+		if (auth.role !== 'admin_sistema') query.where = { storeId: auth.store.id }
+
+		const product = await this.prisma.product.findFirst(query)
 
 		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
-
-		await this.prisma.product.delete({
-			where: {
-				id,
-			},
-		})
+		await this.prisma.product.delete({ where: { id } })
 		return `Product ${product.name} deleted`
 	}
 
-	async update(id: number, data: DTO.UpdateProductDto): Promise<ProductPresenter> {
-		const product = await this.prisma.product.findFirst({ where: { id } })
+	async update(auth: AuthPresenter, id: number, data: DTO.UpdateProductDto): Promise<ProductPresenter> {
+		const query: Prisma.ProductFindManyArgs = { where: { id } }
+		if (auth.role !== 'admin_sistema') query.where = { storeId: auth.store.id }
+		const product = await this.prisma.product.findFirst(query)
 
 		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
 
 		return new ProductPresenter(
 			await this.prisma.product.update({
-				where: { id },
+				where: { id, storeId: auth.store.id },
 				include: { category: true },
 				data,
 			})
