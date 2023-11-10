@@ -27,6 +27,8 @@ export class ACLService {
 		'categories.create': ['admin_sistema', 'admin_conta'],
 		'categories.update': ['admin_sistema', 'admin_conta'],
 		'categories.delete': ['admin_sistema', 'admin_conta'],
+
+		'store.create': ['admin_sistema', 'admin_conta'],
 	}
 
 	verifyPermission(action: action, auth: AuthPresenter, errorMessage?: string): boolean {

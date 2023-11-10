@@ -39,9 +39,8 @@ export class AuthGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest()
 
 		const token = this.extractTokenFromHeader(request)
-
 		if (!token) {
-			throw new ForbiddenException()
+			throw new ForbiddenException('Token não encontrado.')
 		}
 
 		try {

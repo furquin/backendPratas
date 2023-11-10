@@ -6,6 +6,7 @@ import { ProductsModule } from './modules/products/products.module'
 import { UsersModule } from './modules/users/users.module'
 import { ACLModule } from './common/acl/acl.module'
 import { CategoryModule } from './modules/categories/category.module'
+import { StoreModule } from './modules/stores/store.module'
 
 @Module({
 	imports: [
@@ -14,6 +15,7 @@ import { CategoryModule } from './modules/categories/category.module'
 		ProductsModule,
 		CategoryModule,
 		LoginModule,
+		StoreModule,
 		JwtModule.register({ global: true }),
 		ConfigModule.forRoot({ isGlobal: true }),
 	],

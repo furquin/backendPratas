@@ -3,14 +3,19 @@ import { PrismaService } from 'src/database/prismaService'
 import { CategoryPresenter } from './presenters/category.presenter'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as DTO from './dto'
+import { AuthPresenter } from '../auth/presenters/auth.presenter'
 
 @Injectable()
 export class CategoryService {
 	constructor(private readonly prismaService: PrismaService) {}
 
-	async getAll(data?: string): Promise<CategoryPresenter[]> {
+	async getAll(auth: AuthPresenter, data?: string): Promise<CategoryPresenter[]> {
 		const query: Prisma.CategoryFindManyArgs = {}
-
+		if (auth.role !== 'admin_sistema') {
+			query.where = {
+				storeId: auth.store.id,
+			}
+		}
 		if (data) {
 			query.where = {
 				name: {
@@ -24,37 +29,50 @@ export class CategoryService {
 		return categories.map((category) => new CategoryPresenter(category))
 	}
 
-	async findOneById(id: number): Promise<CategoryPresenter> {
-		const category = await this.prismaService.category.findUnique({
-			where: { id },
-		})
+	async findOneById(auth: AuthPresenter, id: number): Promise<CategoryPresenter> {
+		const query: Prisma.CategoryFindFirstArgs = { where: { id }, include: { products: true } }
+		if (auth.role !== 'admin_sistema') {
+			query.where = {
+				store: {
+					id: auth.store.id,
+				},
+			}
+		}
+		const category = await this.prismaService.category.findFirst(query)
 
 		if (!category) throw new NotFoundException('Categoria não encontrada.')
 
 		return new CategoryPresenter(category)
 	}
 
-	async create(data: DTO.CreateCategoryDto): Promise<CategoryPresenter> {
+	async create(auth: AuthPresenter, data: DTO.CreateCategoryDto): Promise<CategoryPresenter> {
 		const category = await this.prismaService.category.create({
-			data,
+			data: {
+				...data,
+				store: {
+					connect: {
+						id: auth.store.id,
+					},
+				},
+			},
 		})
 
 		return new CategoryPresenter(category)
 	}
 
-	async update(id: number, data: DTO.UpdateCategoryDto): Promise<CategoryPresenter> {
+	async update(auth: AuthPresenter, id: number, data: DTO.UpdateCategoryDto): Promise<CategoryPresenter> {
 		const category = await this.prismaService.category.update({
-			where: { id },
+			where: { id, storeId: auth.store.id },
 			data,
 		})
 
 		return new CategoryPresenter(category)
 	}
 
-	async remove(id: number): Promise<string> {
-		await this.findOneById(id)
+	async remove(auth: AuthPresenter, id: number): Promise<string> {
+		await this.findOneById(auth, id)
 		await this.prismaService.category.delete({
-			where: { id },
+			where: { id, storeId: auth.store.id },
 		})
 
 		return 'Categoria removida com sucesso!'
