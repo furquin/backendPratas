@@ -48,7 +48,7 @@ export class AuthGuard implements CanActivate {
 				secret: this.configService.getOrThrow<string>('JWT_SECRET'),
 			})
 
-			const auth = await this.getAuth(payload.uid)
+			const auth = await this.getAuth(payload.id)
 			request['auth'] = auth
 		} catch (e) {
 			throw new ForbiddenException(e instanceof ForbiddenException ? e.message : 'Token inválido.')

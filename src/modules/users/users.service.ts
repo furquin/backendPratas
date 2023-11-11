@@ -65,11 +65,11 @@ export class UsersService {
 				store: true,
 			},
 		}
-		if (auth?.role !== 'admin_sistema') {
-			query.where = {
-				storeId: auth?.store.id,
-			}
+
+		if (auth && auth?.role !== 'admin_sistema') {
+			query.where.storeId = auth?.store.id
 		}
+
 		const user = await this.prisma.user.findFirst({
 			where: query.where,
 			include: query.include,
