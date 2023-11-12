@@ -1,11 +1,10 @@
-import { Decimal } from '@prisma/client/runtime/library'
 import { IProduct } from '../interface/product.interface'
 
 export class ProductPresenter {
 	id: number
 	name: string
 	description: string
-	price: Decimal
+	price: string
 	quantity: number
 	createdAt: Date
 	updatedAt: Date
@@ -17,7 +16,9 @@ export class ProductPresenter {
 		this.id = product.id
 		this.name = product.name
 		this.description = product.description
-		this.price = product.price
+		this.price = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(
+			Number(product.price)
+		)
 		this.quantity = product.quantity
 		this.createdAt = product.createdAt
 		this.updatedAt = product.updatedAt
