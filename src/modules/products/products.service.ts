@@ -46,8 +46,6 @@ export class ProductsService {
 	}
 
 	async findAll(auth: AuthPresenter, data: string): Promise<ProductPresenter[]> {
-		console.log(auth)
-
 		const query: Prisma.ProductFindManyArgs = { include: { category: true } }
 		if (auth.user.role !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
 
