@@ -4,7 +4,7 @@ async function main() {
 	const roles: string[] = ['admin_sistema', 'admin_conta', 'operador']
 	const paymentMethods: string[] = ['Dinheiro', 'Cartão', 'Pix', 'Boleto']
 
-	for (const role in roles) {
+	for (const role of roles) {
 		await prisma.role.upsert({
 			where: { slug: role },
 			update: {},
