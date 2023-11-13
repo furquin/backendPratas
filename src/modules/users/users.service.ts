@@ -25,7 +25,7 @@ export class UsersService {
 				},
 				store: {
 					connect: {
-						id: auth.store.id,
+						id: auth.user.store.id,
 					},
 				},
 			},
@@ -44,9 +44,9 @@ export class UsersService {
 			},
 		}
 
-		if (auth.role !== 'admin_sistema') {
+		if (auth.user.role !== 'admin_sistema') {
 			query.where = {
-				storeId: auth.store.id,
+				storeId: auth.user.store.id,
 			}
 		}
 		const users = await this.prisma.user.findMany({
@@ -66,8 +66,8 @@ export class UsersService {
 			},
 		}
 
-		if (auth && auth?.role !== 'admin_sistema') {
-			query.where.storeId = auth?.store.id
+		if (auth && auth?.user.role !== 'admin_sistema') {
+			query.where.storeId = auth?.user.store.id
 		}
 
 		const user = await this.prisma.user.findFirst({
@@ -93,7 +93,7 @@ export class UsersService {
 		const user = await this.prisma.user.findFirst({
 			where: {
 				id,
-				storeId: auth.store.id,
+				storeId: auth.user.store.id,
 			},
 		})
 
@@ -102,7 +102,7 @@ export class UsersService {
 		await this.prisma.user.delete({
 			where: {
 				id,
-				storeId: auth.store.id,
+				storeId: auth.user.store.id,
 			},
 		})
 

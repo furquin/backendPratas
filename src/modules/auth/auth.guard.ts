@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
 import { ACLService, actionName } from 'src/common/acl/acl.service'
 import { UsersService } from 'src/modules/users/users.service'
+import { AuthPresenter } from './presenters/auth.presenter'
 
 export function GuardRoute(...actions: actionName[]) {
 	return applyDecorators(
@@ -49,7 +50,7 @@ export class AuthGuard implements CanActivate {
 			})
 
 			const auth = await this.getAuth(payload.id)
-			request['auth'] = auth
+			request['auth'] = new AuthPresenter(auth)
 		} catch (e) {
 			throw new ForbiddenException(e instanceof ForbiddenException ? e.message : 'Token inválido.')
 		}

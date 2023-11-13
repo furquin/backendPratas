@@ -11,9 +11,9 @@ export class CategoryService {
 
 	async getAll(auth: AuthPresenter, data?: string): Promise<CategoryPresenter[]> {
 		const query: Prisma.CategoryFindManyArgs = {}
-		if (auth.role !== 'admin_sistema') {
+		if (auth.user.role !== 'admin_sistema') {
 			query.where = {
-				storeId: auth.store.id,
+				storeId: auth.user.store.id,
 			}
 		}
 		if (data) {
@@ -31,10 +31,10 @@ export class CategoryService {
 
 	async findOneById(auth: AuthPresenter, id: number): Promise<CategoryPresenter> {
 		const query: Prisma.CategoryFindFirstArgs = { where: { id }, include: { products: true } }
-		if (auth.role !== 'admin_sistema') {
+		if (auth.user.role !== 'admin_sistema') {
 			query.where = {
 				store: {
-					id: auth.store.id,
+					id: auth.user.store.id,
 				},
 			}
 		}
@@ -51,7 +51,7 @@ export class CategoryService {
 				...data,
 				store: {
 					connect: {
-						id: auth.store.id,
+						id: auth.user.store.id,
 					},
 				},
 			},
@@ -62,7 +62,7 @@ export class CategoryService {
 
 	async update(auth: AuthPresenter, id: number, data: DTO.UpdateCategoryDto): Promise<CategoryPresenter> {
 		const category = await this.prismaService.category.update({
-			where: { id, storeId: auth.store.id },
+			where: { id, storeId: auth.user.store.id },
 			data,
 		})
 
@@ -72,7 +72,7 @@ export class CategoryService {
 	async remove(auth: AuthPresenter, id: number): Promise<string> {
 		await this.findOneById(auth, id)
 		await this.prismaService.category.delete({
-			where: { id, storeId: auth.store.id },
+			where: { id, storeId: auth.user.store.id },
 		})
 
 		return 'Categoria removida com sucesso!'
