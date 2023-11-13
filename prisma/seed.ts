@@ -4,18 +4,17 @@ async function main() {
 	const roles: string[] = ['admin_sistema', 'admin_conta', 'operador']
 	const paymentMethods: string[] = ['Dinheiro', 'Cartão', 'Pix', 'Boleto']
 
-	roles.forEach(
-		async (role, index) =>
-			await prisma.role.upsert({
-				where: { slug: role },
-				update: {},
-				create: {
-					id: index + 1,
-					name: role,
-					slug: role,
-				},
-			})
-	)
+	for (const role in roles) {
+		await prisma.role.upsert({
+			where: { slug: role },
+			update: {},
+			create: {
+				id: roles.indexOf(role) + 1,
+				name: role,
+				slug: role,
+			},
+		})
+	}
 
 	await prisma.store.upsert({
 		where: { name: 'conta mãe' },
@@ -47,17 +46,16 @@ async function main() {
 		},
 	})
 
-	paymentMethods.forEach(
-		async (paymentMethod, index) =>
-			await prisma.paymentMethod.upsert({
-				where: { name: paymentMethod },
-				update: {},
-				create: {
-					id: index + 1,
-					name: paymentMethod,
-				},
-			})
-	)
+	for (const paymentMethod of paymentMethods) {
+		await prisma.paymentMethod.upsert({
+			where: { name: paymentMethod },
+			update: {},
+			create: {
+				id: paymentMethods.indexOf(paymentMethod) + 1,
+				name: paymentMethod,
+			},
+		})
+	}
 }
 main()
 	.then(async () => {
