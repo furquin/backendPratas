@@ -9,7 +9,6 @@ async function main() {
 			where: { slug: role },
 			update: {},
 			create: {
-				id: roles.indexOf(role) + 1,
 				name: role,
 				slug: role,
 			},
