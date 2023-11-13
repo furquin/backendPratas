@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 async function main() {
 	const roles: string[] = ['admin_sistema', 'admin_conta', 'operador']
@@ -47,13 +47,14 @@ async function main() {
 	})
 
 	for (const paymentMethod of paymentMethods) {
+		const paymentMethodData: Prisma.PaymentMethodCreateInput = {
+			name: paymentMethod,
+		}
+
 		await prisma.paymentMethod.upsert({
 			where: { name: paymentMethod },
 			update: {},
-			create: {
-				id: paymentMethods.indexOf(paymentMethod) + 1,
-				name: paymentMethod,
-			},
+			create: paymentMethodData,
 		})
 	}
 }
