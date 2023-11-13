@@ -21,25 +21,27 @@ model User {
   store     Store    @relation(fields: [storeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Order     Order[]
 
   @@map("users")
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  price       Decimal
-  quantity    Int
-  barCode     String   @unique
-  image       String?
-  categoryId  Int      @default(1)
-  storeId     Int
-  store       Store    @relation(fields: [storeId], references: [id])
-  category    Category @relation(fields: [categoryId], references: [id])
-  size        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String?
+  price         Decimal
+  quantity      Int
+  barCode       String         @unique
+  image         String?
+  categoryId    Int            @default(1)
+  storeId       Int
+  store         Store          @relation(fields: [storeId], references: [id])
+  category      Category       @relation(fields: [categoryId], references: [id])
+  size          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  OrderProducts OrderProduct[]
 
   @@map("products")
 }
@@ -75,6 +77,66 @@ model Store {
   users     User[]
   Product   Product[]
   Category  Category[]
+  Order     Order[]
 
   @@map("stores")
+}
+
+model Order {
+  id                 Int            @id @default(autoincrement())
+  userId             Int
+  user               User           @relation(fields: [userId], references: [id])
+  storeId            Int
+  store              Store          @relation(fields: [storeId], references: [id])
+  paymentId          Int
+  payment            PaymentMethod  @relation(fields: [paymentId], references: [id])
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  OrderProducts      OrderProduct[] 
+  Invoices           Invoice[]
+  installment        Boolean        @default(false)
+  installmentsNumber Int            @default(1)
+  totalPriceOrder    Decimal        @db.Decimal(16, 2)
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  id                Int            @id @default(autoincrement())
+  orderId           Int
+  order             Order          @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId         Int
+  product           Product        @relation(fields: [productId], references: [id])
+  quantity          Int
+  price             Decimal        @db.Decimal(16, 2)
+  totalPriceProduct Decimal        @db.Decimal(16, 2)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  PaymentMethod     PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId   Int?
+
+  @@map("order_products")
+}
+
+model PaymentMethod {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  OrderProducts OrderProduct[]
+  Order         Order[]
+
+  @@map("payment_methods")
+}
+
+model Invoice {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status    String   @default("pending")
+  price     Decimal  @db.Decimal(16, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("invoices")
 }

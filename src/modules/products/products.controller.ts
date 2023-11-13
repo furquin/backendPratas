@@ -38,9 +38,9 @@ export class ProductsController {
 		return this.productsService.remove(auth, +id)
 	}
 
-	@Post('/:id/checkout')
+	@Post('/checkout')
 	@GuardRoute('products.checkout')
-	checkout(@Auth() auth: AuthPresenter, @Param('id') id: string, @Body() data: DTO.CheckoutDto) {
-		return this.productsService.checkout(+id, data)
+	checkout(@Auth() auth: AuthPresenter, @Body() data: DTO.CheckoutDto) {
+		return this.productsService.checkout(auth, data)
 	}
 }
