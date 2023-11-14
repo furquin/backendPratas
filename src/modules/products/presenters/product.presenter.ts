@@ -4,7 +4,7 @@ export class ProductPresenter {
 	id: number
 	name: string
 	description: string
-	price: string
+	price: number
 	quantity: number
 	createdAt: Date
 	updatedAt: Date
@@ -16,9 +16,7 @@ export class ProductPresenter {
 		this.id = product.id
 		this.name = product.name
 		this.description = product.description
-		this.price = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(
-			Number(product.price)
-		)
+		this.price = product.price.toFixed(2) as unknown as number
 		this.quantity = product.quantity
 		this.createdAt = product.createdAt
 		this.updatedAt = product.updatedAt

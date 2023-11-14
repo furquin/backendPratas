@@ -30,7 +30,7 @@ model Product {
   id            Int            @id @default(autoincrement())
   name          String
   description   String?
-  price         Decimal
+  price         Decimal        @db.Decimal(16, 2)
   quantity      Int
   barCode       String         @unique
   image         String?
@@ -41,7 +41,7 @@ model Product {
   size          String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  OrderProducts OrderProduct[]
+  OrderProducts OrderProduct[] 
 
   @@map("products")
 }
@@ -92,7 +92,7 @@ model Order {
   payment            PaymentMethod  @relation(fields: [paymentId], references: [id])
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
-  OrderProducts      OrderProduct[] 
+  OrderProducts      OrderProduct[]
   Invoices           Invoice[]
   installment        Boolean        @default(false)
   installmentsNumber Int            @default(1)
@@ -106,7 +106,7 @@ model OrderProduct {
   orderId           Int
   order             Order          @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   productId         Int
-  product           Product        @relation(fields: [productId], references: [id])
+  product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   quantity          Int
   price             Decimal        @db.Decimal(16, 2)
   totalPriceProduct Decimal        @db.Decimal(16, 2)
