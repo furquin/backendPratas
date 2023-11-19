@@ -57,7 +57,7 @@ ENV TZ America/Sao_Paulo
 ENV NODE_ENV=production
 ENV CHROME_BIN=google-chrome-stable
 
-WORKDIR ./usr/src/app
+WORKDIR /usr/src/app
 
 COPY package* ./
 
