@@ -57,13 +57,13 @@ ENV TZ America/Sao_Paulo
 ENV NODE_ENV=production
 ENV CHROME_BIN=google-chrome-stable
 
-WORKDIR /app
+WORKDIR ./usr/src/app
 
 COPY package* ./
 
 RUN npm install
 
-COPY . .
+COPY . ./
 
 RUN npm install -g @nestjs/cli
 RUN npx prisma migrate deploy 
