@@ -6,6 +6,7 @@ import { JwtTokenService } from 'src/services/jwt/jwt.service'
 import { UserPresenter } from '../users/presenters/user.presenter'
 import * as DTO from './dto'
 import { PrismaService } from 'src/database/prismaService'
+import RabbitmqServer from 'src/services/rabbitMq/rabbitMq.service'
 
 @Injectable()
 export class LoginService {
@@ -15,7 +16,8 @@ export class LoginService {
 		private readonly bcrypt: BcryptService,
 		private readonly configService: ConfigService,
 		private readonly bcryptService: BcryptService,
-		private readonly prisma: PrismaService
+		private readonly prisma: PrismaService,
+		private readonly rabbitmqServer: RabbitmqServer
 	) {}
 	async signIn(email: string, password: string): Promise<{ user: UserPresenter; login: { token: string } }> {
 		const user = await this.getUser.findByEmail(email)
@@ -33,45 +35,52 @@ export class LoginService {
 	}
 
 	async register(data: DTO.RegisterDTO): Promise<{ user: UserPresenter; login: { token: string } }> {
-		data.password = await this.bcrypt.hash(data.password)
+		const user = await this.prisma.$transaction(async (trx) => {
+			data.password = await this.bcrypt.hash(data.password)
 
-		let store = await this.prisma.store.findUnique({
-			where: {
-				name: data.storeName,
-			},
-		})
+			let store = await trx.store.findUnique({
+				where: {
+					name: data.storeName,
+				},
+			})
 
-		if (store) {
-			throw new BadRequestException('Store already exists')
-		}
+			if (store) {
+				throw new BadRequestException('Store already exists')
+			}
 
-		store = await this.prisma.store.create({
-			data: {
-				name: data.storeName,
-			},
-		})
+			store = await trx.store.create({
+				data: {
+					name: data.storeName,
+				},
+			})
 
-		const user = await this.prisma.user.create({
-			data: {
-				name: data.name,
-				email: data.email,
-				password: data.password,
-				role: {
-					connect: {
-						id: data.roleId,
+			const user = await trx.user.create({
+				data: {
+					name: data.name,
+					email: data.email,
+					password: data.password,
+					role: {
+						connect: {
+							id: data.roleId,
+						},
+					},
+					store: {
+						connect: {
+							id: store.id,
+						},
 					},
 				},
-				store: {
-					connect: {
-						id: store.id,
-					},
+				include: {
+					role: true,
+					store: true,
 				},
-			},
-			include: {
-				role: true,
-				store: true,
-			},
+			})
+
+			await this.rabbitmqServer.publishInQueue('mail', JSON.stringify({ template: 'new-register', email: user.email }))
+
+			return user
 		})
+
 		return {
 			user: new UserPresenter(user),
 			login: {
