@@ -136,7 +136,7 @@ export class ProductsService {
 								id: order.id,
 							},
 						},
-						status: data.invoiceStatus.length > 1 ? data.invoiceStatus[installment - 1] : 'pending',
+						status: data.invoiceStatus?.length > 1 ? data.invoiceStatus[installment - 1] : 'pending',
 						price: data.totalPriceOrder / data.installmentsNumber,
 					},
 				})

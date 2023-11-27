@@ -29,6 +29,11 @@ export class ACLService {
 		'categories.delete': ['admin_sistema', 'admin_conta'],
 
 		'store.create': ['admin_sistema', 'admin_conta'],
+
+		'payment-methods.read': ['admin_sistema', 'admin_conta'],
+		'payment-methods.create': ['admin_sistema', 'admin_conta'],
+		'payment-methods.update': ['admin_sistema', 'admin_conta'],
+		'payment-methods.delete': ['admin_sistema', 'admin_conta'],
 	}
 
 	verifyPermission(action: action, auth: AuthPresenter, errorMessage?: string): boolean {

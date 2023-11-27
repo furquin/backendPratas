@@ -1,14 +1,5 @@
 import { Type } from 'class-transformer'
-import {
-	IsArray,
-	IsBoolean,
-	IsDecimal,
-	IsNotEmpty,
-	IsNumber,
-	IsOptional,
-	IsString,
-	ValidateNested,
-} from 'class-validator'
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 
 export class CheckoutProductDto {
 	@IsNotEmpty({ message: 'Product id is required' })
@@ -32,11 +23,11 @@ export class CheckoutDto {
 	installmentsNumber?: number
 
 	@IsArray({ message: 'invoiceStatus must be an array' })
-	@IsNotEmpty({ message: 'invoiceStatus is required' })
+	@IsOptional()
 	@IsString({ each: true, message: 'invoiceStatus must be a string' })
 	invoiceStatus?: string[]
 
-	@IsDecimal({}, { message: 'totalPriceOrder must be a decimal' })
+	@IsNumber({}, { message: 'totalPriceOrder must be a decimal' })
 	@IsNotEmpty({ message: 'totalPriceOrder is required' })
 	totalPriceOrder: number
 

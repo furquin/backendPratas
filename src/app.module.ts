@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module'
 import { ACLModule } from './common/acl/acl.module'
 import { CategoryModule } from './modules/categories/category.module'
 import { StoreModule } from './modules/stores/store.module'
+import { PaymentMethodsModule } from './modules/payment-methods/payment-methods.module'
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { StoreModule } from './modules/stores/store.module'
 		StoreModule,
 		JwtModule.register({ global: true }),
 		ConfigModule.forRoot({ isGlobal: true }),
+		PaymentMethodsModule,
 	],
 	controllers: [],
 	providers: [],
