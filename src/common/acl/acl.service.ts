@@ -47,7 +47,7 @@ export class ACLService {
 			throw new ForbiddenException('Ação desconhecida.')
 		}
 
-		const has = allowedRoles.some((slug) => auth.user.role === slug)
+		const has = allowedRoles.some((slug) => auth.user.role.slug === slug)
 
 		if (!has) {
 			throw new ForbiddenException(errorMessage ?? 'Sem permissão.')
@@ -69,6 +69,6 @@ export class ACLService {
 			return slug.some((slug) => this.hasRole(auth, slug)) || slug.length === 0
 		}
 
-		return auth.user.role === slug
+		return auth.user.role.slug === slug
 	}
 }
