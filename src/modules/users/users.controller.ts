@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import { Auth, GuardRoute } from 'src/modules/auth/auth.guard'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UsersService } from './users.service'
 import { UserPresenter } from './presenters/user.presenter'
 import { AuthPresenter } from '../auth/presenters/auth.presenter'
+import { UpdateUserDto } from './dto/update-user.dto'
 
 @Controller('users')
 export class UsersController {
@@ -17,8 +18,8 @@ export class UsersController {
 
 	@Get()
 	@GuardRoute('users.read')
-	findAll(@Auth() auth: AuthPresenter): Promise<UserPresenter[]> {
-		return this.usersService.findAll(auth)
+	findAll(@Auth() auth: AuthPresenter, @Query('filter') filter: string): Promise<UserPresenter[]> {
+		return this.usersService.findAll(auth, filter)
 	}
 
 	@Get('/:id')
@@ -31,5 +32,15 @@ export class UsersController {
 	@GuardRoute('users.delete')
 	remove(@Auth() auth: AuthPresenter, @Param('id') id: string) {
 		return this.usersService.remove(auth, +id)
+	}
+
+	@Patch('/:id')
+	@GuardRoute('users.update')
+	async update(
+		@Auth() auth: AuthPresenter,
+		@Param('id') id: string,
+		@Body() data: UpdateUserDto
+	): Promise<UserPresenter> {
+		return this.usersService.update(auth, +id, data)
 	}
 }

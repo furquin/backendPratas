@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator'
+import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator'
 import { userEmailExistsValidation } from 'src/common/validators/emailUnico.validator'
 export class CreateUserDto {
 	@IsString({ message: 'Name must be a string' })
@@ -18,4 +18,8 @@ export class CreateUserDto {
 	@IsNotEmpty({ message: 'Role is required' })
 	@IsNumber({}, { message: 'Role must be a number' })
 	roleId: number
+
+	@IsOptional()
+	@IsBoolean({ message: 'Active must be a boolean' })
+	active: boolean
 }

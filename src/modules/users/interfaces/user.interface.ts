@@ -12,4 +12,5 @@ export interface IUser {
 	storeId: number
 	store: IStore
 	role: IRole
+	active: boolean
 }
