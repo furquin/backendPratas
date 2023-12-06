@@ -11,7 +11,7 @@ export class CategoryService {
 
 	async getAll(auth: AuthPresenter, data?: string): Promise<CategoryPresenter[]> {
 		const query: Prisma.CategoryFindManyArgs = {}
-		if (auth.user.role !== 'admin_sistema') {
+		if (auth.user.role.slug !== 'admin_sistema') {
 			query.where = {
 				storeId: auth.user.store.id,
 			}
@@ -31,7 +31,7 @@ export class CategoryService {
 
 	async findOneById(auth: AuthPresenter, id: number): Promise<CategoryPresenter> {
 		const query: Prisma.CategoryFindFirstArgs = { where: { id }, include: { products: true } }
-		if (auth.user.role !== 'admin_sistema') {
+		if (auth.user.role.slug !== 'admin_sistema') {
 			query.where = {
 				store: {
 					id: auth.user.store.id,

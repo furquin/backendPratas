@@ -47,7 +47,7 @@ export class ProductsService {
 
 	async findAll(auth: AuthPresenter, data: string): Promise<ProductPresenter[]> {
 		const query: Prisma.ProductFindManyArgs = { include: { category: true } }
-		if (auth.user.role !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
+		if (auth.user.role.slug !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
 
 		if (data) {
 			query.where = {
@@ -63,7 +63,7 @@ export class ProductsService {
 
 	async findOneById(auth: AuthPresenter, id: number): Promise<ProductPresenter> {
 		const query: Prisma.ProductFindManyArgs = { include: { category: true } }
-		if (auth.user.role !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
+		if (auth.user.role.slug !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
 		query.where = { id }
 		const product = await this.prismaService.product.findFirst(query)
 
@@ -74,7 +74,7 @@ export class ProductsService {
 
 	async remove(auth: AuthPresenter, id: number): Promise<string> {
 		const query: Prisma.ProductFindManyArgs = { where: { id } }
-		if (auth.user.role !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
+		if (auth.user.role.slug !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
 
 		const product = await this.prismaService.product.findFirst(query)
 
@@ -85,7 +85,7 @@ export class ProductsService {
 
 	async update(auth: AuthPresenter, id: number, data: DTO.UpdateProductDto): Promise<ProductPresenter> {
 		const query: Prisma.ProductFindManyArgs = { where: { id } }
-		if (auth.user.role !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
+		if (auth.user.role.slug !== 'admin_sistema') query.where = { storeId: auth.user.store.id }
 		const product = await this.prismaService.product.findFirst(query)
 
 		if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND)
